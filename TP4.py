@@ -28,6 +28,8 @@ def pestaña(self, root):
     
     self.entry_L = ttk.Entry(self.tab1)
     self.entry_L.grid(row=1, column=1, padx=10, pady=5)
+
+    #Ingreso Datos futbol
     
     self.label_F = ttk.Label(self.tab1, text="Futbol")
     self.label_F.grid(row=2, column=0, padx=10, pady=5, sticky="w")
@@ -49,6 +51,8 @@ def pestaña(self, root):
     
     self.entry_FOS = ttk.Entry(self.tab1)
     self.entry_FOS.grid(row=5, column=1, padx=10, pady=5)
+
+    #Ingreso Datos Handball
     
     self.label_H = ttk.Label(self.tab1, text="Handball")
     self.label_H.grid(row=6, column=0, padx=10, pady=5, sticky="w")
@@ -65,7 +69,6 @@ def pestaña(self, root):
     self.entry_HLS = ttk.Entry(self.tab1)
     self.entry_HLS.grid(row=8, column=1, padx=10, pady=5)
 
-
     self.label_HOI = ttk.Label(self.tab1, text="\t Ingrese limite inferior de ocupacion cancha con Dist. uniforme")
     self.label_HOI.grid(row=9, column=0, padx=10, pady=5, sticky="w")
     
@@ -78,8 +81,9 @@ def pestaña(self, root):
     self.entry_HOS = ttk.Entry(self.tab1)
     self.entry_HOS.grid(row=10, column=1, padx=10, pady=5)
     
+    #Ingreso Datos Basketball
     
-    self.label_B = ttk.Label(self.tab1, text="Handball")
+    self.label_B = ttk.Label(self.tab1, text="Basketball")
     self.label_B.grid(row=11, column=0, padx=10, pady=5, sticky="w")
     
     self.label_BLI = ttk.Label(self.tab1, text="\t Ingrese limite inferior de la llegada a la cancha con Dist. uniforme")
@@ -119,9 +123,9 @@ def pestaña(self, root):
 
 def generacion_vector(param):
     primer_vector = [0] * 11
-    acu = 0
-    acu_precio = 0
- 
+    #acu = 0
+    # acu_precio = 0
+
   
     for i in range(param):
         primer_vector[3] = 0
