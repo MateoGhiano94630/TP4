@@ -127,13 +127,13 @@ def uniforme(inf, sup, RND):
 def inicializar_vector():
     vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, '-', 0, 0, 0, 0, 0]
     vector_estado[2] = random.random()
-    vector_estado[3] = exp_negativa(vector_estado[2], 10) 
+    vector_estado[3] = exp_negativa(vector_estado[2], 10) #cambiar media  
 
     vector_estado[4] = random.random()
-    vector_estado[5] = uniforme(10, 14, vector_estado[5]) 
+    vector_estado[5] = uniforme(10, 14, vector_estado[5]) #cambiar min y max 
 
     vector_estado[6] = random.random()
-    vector_estado[7] = uniforme(6, 10, vector_estado[7]) 
+    vector_estado[7] = uniforme(6, 10, vector_estado[7]) #cambiar min y max por las entradas
 
     return vector_estado
 
@@ -153,7 +153,7 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada futbol'
         vector_posterior[1] = vector_anterior[3]
         vector_posterior[2] = random.random()
-        vector_posterior[3] = exp_negativa(vector_posterior[2], 10) 
+        vector_posterior[3] = exp_negativa(vector_posterior[2], 10) # cambiar el 10 por lo que ingrese
         vector_posterior[4] = 0
         vector_posterior[6] = 0
         
@@ -164,7 +164,7 @@ def generacion_linea(vector_anterior):
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Futbol'
             vector_posterior[11] = random.random()
-            vector_posterior[12] =  uniforme(70, 130, vector_posterior[11])
+            vector_posterior[12] =  uniforme(80, 100,vector_posterior[11]) # cambiar 70 y 130
             vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
@@ -174,7 +174,7 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada handball'
         vector_posterior[1] = vector_anterior[5]
         vector_posterior[4] = random.random()
-        vector_posterior[5] = uniforme(10, 14, vector_posterior[4])
+        vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) # cambiar 10 y 14
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
@@ -183,7 +183,7 @@ def generacion_linea(vector_anterior):
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Handball'
             vector_posterior[11] = random.random()
-            vector_posterior[12] =  uniforme(70, 130, vector_posterior[11])
+            vector_posterior[12] =  uniforme(70, 130, vector_posterior[11]) #cambiar 70 y 130
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
                 vector_posterior[16] = vector_anterior[16] + (vector_posterior[1] - vector_anterior[1])
@@ -192,7 +192,7 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada basket'
         vector_posterior[1] = vector_anterior[7]
         vector_posterior[6] = random.random()
-        vector_posterior[7] = uniforme(6, 10, vector_posterior[6])
+        vector_posterior[7] = uniforme(6, 10, vector_posterior[6]) 
         vector_posterior[2] = 0
         vector_posterior[4] = 0
         
@@ -221,7 +221,8 @@ def generacion_linea(vector_anterior):
     return vector_posterior
 
 
-
+# cambiar las funciones unifrme y exponencial y sacrle el *60, ya que en algunas se usan pero ya estan puestas en minutos,, agregar el * 60 en las lineas que se calculen en horas nomas.
+#cmabiar los numeros por la entradas. 
 
 class GestionFila:
     def __init__(self, root):
