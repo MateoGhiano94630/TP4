@@ -119,21 +119,21 @@ def pestaña(self, root):
     self.canvas.grid(row=18, column=0, columnspan=2, padx=10, pady=10)
     
 def exp_negativa(RND, media):
-    return (-media * math.log(1 - RND))*60
+    return (-media * math.log(1 - RND))
 
 def uniforme(inf, sup, RND):
-    return (inf + RND*(sup-inf)) *60
+    return (inf + RND*(sup-inf)) 
 
 def inicializar_vector():
-    vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, '-', 0, 0, 0, 0, 0]
+    vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, '-', 0, 0, 0, 0]
     vector_estado[2] = random.random()
-    vector_estado[3] = exp_negativa(vector_estado[2], 10) #cambiar media  
+    vector_estado[3] = exp_negativa(vector_estado[2], 10) * 60
 
     vector_estado[4] = random.random()
-    vector_estado[5] = uniforme(10, 14, vector_estado[5]) #cambiar min y max 
+    vector_estado[5] = uniforme(10, 14, vector_estado[5]) * 60
 
     vector_estado[6] = random.random()
-    vector_estado[7] = uniforme(6, 10, vector_estado[7]) #cambiar min y max por las entradas
+    vector_estado[7] = uniforme(6, 10, vector_estado[7]) * 60
 
     return vector_estado
 
@@ -142,7 +142,7 @@ def generacion_linea(vector_anterior):
     if vector_posterior[1] == 0 or vector_posterior[13] in ['-', 0]:
         valores = [vector_anterior[3], vector_anterior[5], vector_anterior[7]]
     else:
-        valores = [vector_anterior[3], vector_anterior[5], vector_anterior[7], vector_anterior[14]]
+        valores = [vector_anterior[3], vector_anterior[5], vector_anterior[7], vector_anterior[13]]
 
 
     minimo_valor = min(valores)
@@ -153,7 +153,7 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada futbol'
         vector_posterior[1] = vector_anterior[3]
         vector_posterior[2] = random.random()
-        vector_posterior[3] = exp_negativa(vector_posterior[2], 10) # cambiar el 10 por lo que ingrese
+        vector_posterior[3] = exp_negativa(vector_posterior[2], 10) * 60  # cambiar el 10 por lo que ingrese
         vector_posterior[4] = 0
         vector_posterior[6] = 0
         
@@ -174,7 +174,7 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada handball'
         vector_posterior[1] = vector_anterior[5]
         vector_posterior[4] = random.random()
-        vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) # cambiar 10 y 14
+        vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) * 60# cambiar 10 y 14
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
@@ -184,6 +184,7 @@ def generacion_linea(vector_anterior):
             vector_posterior[9] = 'Handball'
             vector_posterior[11] = random.random()
             vector_posterior[12] =  uniforme(70, 130, vector_posterior[11]) #cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
                 vector_posterior[16] = vector_anterior[16] + (vector_posterior[1] - vector_anterior[1])
@@ -192,7 +193,7 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada basket'
         vector_posterior[1] = vector_anterior[7]
         vector_posterior[6] = random.random()
-        vector_posterior[7] = uniforme(6, 10, vector_posterior[6]) 
+        vector_posterior[7] = uniforme(6, 10, vector_posterior[6]) * 60
         vector_posterior[2] = 0
         vector_posterior[4] = 0
         
@@ -204,6 +205,7 @@ def generacion_linea(vector_anterior):
             vector_posterior[9] = 'Basket'
             vector_posterior[11] = random.random()
             vector_posterior[12] =  uniforme(60, 100, vector_posterior[11])
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
                 vector_posterior[15] = vector_anterior[15] + (vector_posterior[1] - vector_anterior[1])
@@ -211,13 +213,14 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Inicio de limpieza'
         vector_posterior[1] = vector_anterior[13]       
         vector_posterior[8] = 'En limpieza'
+        vector_posterior[9] = '-'
         vector_posterior[12] = 10
         vector_posterior[13] = vector_posterior[1] + vector_posterior[12]
     elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza":
         vector_posterior [0] = 'Fin de limpieza'
         vector_posterior [1]  = vector_anterior[13]
         vector_posterior[8] = 'Libre'
-
+            
     return vector_posterior
 
 
