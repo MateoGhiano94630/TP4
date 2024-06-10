@@ -152,9 +152,9 @@ def generacion_linea(vector_anterior):
     
     if indice_minimo == 0:
         vector_posterior[0] = 'Llegada futbol'
-        vector_posterior[1] = vector_anterior[7]
+        vector_posterior[1] = vector_anterior[3]
         vector_posterior[2] = random.random()
-        vector_posterior[3] = exp_negativa(vector_anterior[3], 10) 
+        vector_posterior[3] = exp_negativa(vector_posterior[2], 10) 
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
@@ -168,9 +168,9 @@ def generacion_linea(vector_anterior):
 
     elif indice_minimo == 1:
         vector_posterior[0] = 'Llegada handball'
-        vector_posterior[1] = vector_anterior[7]
+        vector_posterior[1] = vector_anterior[5]
         vector_posterior[4] = random.random()
-        vector_posterior[5] = uniforme(10, 14, vector_posterior[6])
+        vector_posterior[5] = uniforme(10, 14, vector_posterior[4])
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
@@ -207,7 +207,7 @@ def generacion_linea(vector_anterior):
         vector_posterior [0] = 'Fin de limpieza'
         vector_posterior [1]  = vector_anterior[14]
         vector_posterior[8] = 'Libre'
-
+        
     return vector_posterior
 
 
