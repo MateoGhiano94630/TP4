@@ -2,8 +2,6 @@ import random
 import tkinter as tk
 import math 
 from tabulate import tabulate
-
-
 from tkinter import ttk
         
 
@@ -127,10 +125,10 @@ def uniforme(inf, sup, RND):
     amp = sup - inf
     return (inf + (amp * RND)) *60
 
-def inicializar_vector(tiempo_simulacion):
-    vector_estado = ["Inicializacion", tiempo_simulacion, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, 0, 0, 0, 0, 0]
+def inicializar_vector():
+    vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, 0, 0, 0, 0, 0]
     vector_estado[2] = random.random()
-    vector_estado[3] = exp_negativa(vector_estado[3], 10) 
+    vector_estado[3] = exp_negativa(vector_estado[2], 10) 
 
     vector_estado[4] = random.random()
     vector_estado[5] = uniforme(10, 14, vector_estado[5]) 
@@ -227,7 +225,7 @@ class GestionFila:
         pestaña(self, root)
     def llamar(self):
         tiempo_final = float(self.entry_TS.get())
-        vector_anterior = inicializar_vector(0)
+        vector_anterior = inicializar_vector()
         data = []
 
         while vector_anterior[1] <= tiempo_final:
@@ -237,7 +235,7 @@ class GestionFila:
         table_text = tabulate(data, headers=['Evento', 'Reloj', 'RND',
                                             'Tpo llegada', 'RND', 'Tpo llegada', 'RND',
                                             'Tpo llegada', 'Estado','Quien esta', 'Cola', 'RND', 'Tiempo', 
-                                            'Tiempo desocupacion', 'Futbol', 'Basketball', 'Handball', 'Tpo libre cancha'])
+                                            'Tpo desocupacion', 'Futbol', 'Basketball', 'Handball', 'Tpo libre cancha'])
 
         root = tk.Tk()
         root.title("Tabla de visitas")
