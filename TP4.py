@@ -1,6 +1,8 @@
 import random
 import tkinter as tk
 import math 
+from tabulate import tabulate
+
 
 from tkinter import ttk
         
@@ -111,7 +113,7 @@ def pestaña(self, root):
     
 
     self.button_generate = ttk.Button(
-        self.tab1, text="Generar", command=self.generador)
+        self.tab1, text="Generar", command=self.llamar)
     self.button_generate.grid(
         row=17, column=0, columnspan=2, padx=10, pady=10)
 
@@ -126,7 +128,7 @@ def uniforme(inf, sup, RND):
     return (inf + (amp * RND)) *60
 
 def inicializar_vector(tiempo_simulacion):
-    vector_estado = ["Inicializacion", tiempo_simulacion, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, '-', '-', '-', '-', '-', '-']
+    vector_estado = ["Inicializacion", tiempo_simulacion, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, 0, 0, 0, 0, 0]
     vector_estado[2] = random.random()
     vector_estado[3] = exp_negativa(vector_estado[3], 10) 
 
@@ -159,12 +161,14 @@ def generacion_linea(vector_anterior):
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
         else:
+            vector_posterior[17] = vector_anterior[17] + (vector_posterior[1] - vector_anterior[1])
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Futbol'
             vector_posterior[11] = random.random()
             vector_posterior[12] =  uniforme(70, 130, vector_posterior[11])
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
+                vector_posterior[14] = vector_anterior[14] + (vector_posterior[1] - vector_anterior[1])
 
     elif indice_minimo == 1:
         vector_posterior[0] = 'Llegada handball'
@@ -175,12 +179,14 @@ def generacion_linea(vector_anterior):
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
         else:
+            vector_posterior[17] = vector_anterior[17] + (vector_posterior[1] - vector_anterior[1])
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Handball'
             vector_posterior[11] = random.random()
             vector_posterior[12] =  uniforme(70, 130, vector_posterior[11])
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
+                vector_posterior[16] = vector_anterior[16] + (vector_posterior[1] - vector_anterior[1])
 
     elif indice_minimo == 2:
         vector_posterior[0] = 'Llegada basket'
@@ -191,12 +197,14 @@ def generacion_linea(vector_anterior):
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
         else:
+            vector_posterior[17] = vector_anterior[17] + (vector_posterior[1] - vector_anterior[1])
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Basket'
             vector_posterior[11] = random.random()
             vector_posterior[12] =  uniforme(60, 100, vector_posterior[11])
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
+                vector_posterior[15] = vector_anterior[15] + (vector_posterior[1] - vector_anterior[1])
     elif indice_minimo == 3 and vector_anterior[0] == 'Llegada basket' or vector_anterior[0] == 'Llegada futbol' or vector_anterior[0] == 'Llegada handball':
         vector_posterior[0] = 'Inicio de limpieza'
         vector_posterior[1] = vector_anterior[14]
@@ -207,7 +215,7 @@ def generacion_linea(vector_anterior):
         vector_posterior [0] = 'Fin de limpieza'
         vector_posterior [1]  = vector_anterior[14]
         vector_posterior[8] = 'Libre'
-        
+
     return vector_posterior
 
 
@@ -220,10 +228,25 @@ class GestionFila:
     def llamar(self):
         tiempo_final = float(self.entry_TS.get())
         vector_anterior = inicializar_vector(0)
+        data = []
 
         while vector_anterior[1] <= tiempo_final:
             vector_anterior = generacion_linea(vector_anterior)
+            data.extend([vector_anterior])
 
+        table_text = tabulate(data, headers=['Evento', 'Reloj', 'RND',
+                                            'Tpo llegada', 'RND', 'Tpo llegada', 'RND',
+                                            'Tpo llegada', 'Estado','Quien esta', 'Cola', 'RND', 'Tiempo', 
+                                            'Tiempo desocupacion', 'Futbol', 'Basketball', 'Handball', 'Tpo libre cancha'])
+
+        root = tk.Tk()
+        root.title("Tabla de visitas")
+        
+        text_area = tk.Text(root, height=40, width=170)
+        text_area.insert(tk.END, table_text)
+        text_area.pack(expand=True, fill=tk.BOTH)
+        
+        root.mainloop()
     
 # Ejemplo de uso
 root = tk.Tk()
