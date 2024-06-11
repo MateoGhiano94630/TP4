@@ -3,7 +3,7 @@ import tkinter as tk
 import math 
 from tabulate import tabulate
 from tkinter import ttk
-        
+import copy
 
 def pestaña(self, root):
     self.root = root
@@ -125,7 +125,7 @@ def uniforme(inf, sup, RND):
     return (inf + RND*(sup-inf)) 
 
 def inicializar_vector():
-    vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, '-', 0, 0, 0, 0]
+    vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, '-', 0, 0, 0, 0,[]]
     vector_estado[2] = random.random()
     vector_estado[3] = exp_negativa(vector_estado[2], 10) * 60
 
@@ -159,6 +159,7 @@ def generacion_linea(vector_anterior):
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
+            vector_posterior[18].append('Futbol')
         else:
             vector_posterior[17] = vector_anterior[17] + (vector_posterior[1] - vector_anterior[1])
             vector_posterior[8] = 'Ocupado'
@@ -174,10 +175,13 @@ def generacion_linea(vector_anterior):
         vector_posterior[0] = 'Llegada handball'
         vector_posterior[1] = vector_anterior[5]
         vector_posterior[4] = random.random()
-        vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) * 60# cambiar 10 y 14
+        vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) * 60
+        vector_posterior[2] = 0
+        vector_posterior[6] = 0
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
+            vector_posterior[18].append('Handball')
         else:
             vector_posterior[17] = vector_anterior[17] + (vector_posterior[1] - vector_anterior[1])
             vector_posterior[8] = 'Ocupado'
@@ -199,28 +203,61 @@ def generacion_linea(vector_anterior):
         
         if vector_anterior[8] == 'Ocupado' or vector_anterior[8] == 'En limpieza':
             vector_posterior[10] += 1
+            vector_posterior[18].append('Basket')
         else:
             vector_posterior[17] = vector_anterior[17] + (vector_posterior[1] - vector_anterior[1])
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Basket'
             vector_posterior[11] = random.random()
             vector_posterior[12] =  uniforme(60, 100, vector_posterior[11])
+            vector_posterior[11] = 0
             vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
                 vector_posterior[15] = vector_anterior[15] + (vector_posterior[1] - vector_anterior[1])
     elif indice_minimo == 3 and vector_anterior[0] == 'Llegada basket' or vector_anterior[0] == 'Llegada futbol' or vector_anterior[0] == 'Llegada handball':
         vector_posterior[0] = 'Inicio de limpieza'
+        vector_posterior[2] = 0
+        vector_posterior[4] = 0
+        vector_posterior[6] = 0
+        
         vector_posterior[1] = vector_anterior[13]       
         vector_posterior[8] = 'En limpieza'
         vector_posterior[9] = '-'
         vector_posterior[12] = 10
         vector_posterior[13] = vector_posterior[1] + vector_posterior[12]
+    elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza" and  vector_posterior[10] > 0:
+        vector_posterior[10] -= 1
+        vector_posterior[0] = 'Llegada ' + (vector_posterior[18])[0]
+        vector_posterior[1] = vector_anterior[13]
+        if vector_posterior[0] == 'Llegada futbol':
+            vector_posterior[1] = vector_anterior[3]
+            vector_posterior[2] = random.random()
+            vector_posterior[3] = exp_negativa(vector_posterior[2], 10) * 60  # cambiar el 10 por lo que ingrese
+            vector_posterior[2] = 0
+            vector_posterior[4] = 0
+            vector_posterior[6] = 0
+        elif vector_posterior[0] == 'Llegada handball':
+            vector_posterior[1] = vector_anterior[5]
+            vector_posterior[4] = random.random()
+            vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) * 60
+            vector_posterior[2] = 0
+            vector_posterior[4] = 0
+            vector_posterior[6] = 0
+        elif vector_posterior[0] == 'Llegada basket':  
+            vector_posterior[1] = vector_anterior[7]
+            vector_posterior[6] = random.random()
+            vector_posterior[7] = uniforme(6, 10, vector_posterior[6]) * 60
+            vector_posterior[2] = 0
+            vector_posterior[4] = 0
+            vector_posterior[6] = 0
+        
     elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza":
         vector_posterior [0] = 'Fin de limpieza'
         vector_posterior [1]  = vector_anterior[13]
         vector_posterior[8] = 'Libre'
-            
+        vector_posterior[12] = 0
+        vector_posterior[13] = 0
     return vector_posterior
 
 
@@ -235,15 +272,15 @@ class GestionFila:
         tiempo_final = float(self.entry_TS.get())
         vector_anterior = inicializar_vector()
         data = []
+        data.append(copy.deepcopy(vector_anterior))
 
         while vector_anterior[1] <= tiempo_final:
             vector_anterior = generacion_linea(vector_anterior)
-            data.extend([vector_anterior])
-
-        table_text = tabulate(data, headers=['Evento', 'Reloj', 'RND',
-                                            'Tpo llegada', 'RND', 'Tpo llegada', 'RND',
-                                            'Tpo llegada', 'Estado','Quien esta', 'Cola', 'RND', 'Tiempo', 
-                                            'Tpo desocupacion', 'Futbol', 'Basketball', 'Handball', 'Tpo libre cancha'])
+            data.append(copy.deepcopy(vector_anterior))
+        table_text = tabulate(data, headers=['Evento', 'Reloj', '?',
+                                            'Tpo llegada', '?', 'Tpo llegada', '?',
+                                            'Tpo llegada', 'Estado','Quien', 'Cola', '?', 'TPO', 
+                                            'Tpo des', 'F', 'B', 'HB', 'ACUTLC', 'cola'])
 
         root = tk.Tk()
         root.title("Tabla de visitas")
