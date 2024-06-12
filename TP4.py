@@ -130,10 +130,10 @@ def inicializar_vector():
     vector_estado[3] = exp_negativa(vector_estado[2], 10) * 60
 
     vector_estado[4] = random.random()
-    vector_estado[5] = uniforme(10, 14, vector_estado[5]) * 60
+    vector_estado[5] = uniforme(10, 14, vector_estado[4]) * 60
 
     vector_estado[6] = random.random()
-    vector_estado[7] = uniforme(6, 10, vector_estado[7]) * 60
+    vector_estado[7] = uniforme(6, 10, vector_estado[6]) * 60
 
     return vector_estado
 
@@ -148,12 +148,48 @@ def generacion_linea(vector_anterior):
     minimo_valor = min(valores)
     indice_minimo = valores.index(minimo_valor)
     
-    
-    if indice_minimo == 0:
+    if indice_minimo in [0,1,2] and 'llegada' in vector_anterior[0].lower():
+        if indice_minimo == 0:
+            vector_posterior[0] = 'Llegada futbol'
+            vector_posterior[1] = vector_anterior[3] 
+            vector_posterior[2] = random.random()
+            vector_posterior[3] = (exp_negativa(vector_posterior[2], 10) * 60) + vector_posterior[1]  # cambiar el 10 por lo que ingrese
+            vector_posterior[4] = 0
+            vector_posterior[6] = 0
+            vector_posterior[8] = 'Ocupado'
+            vector_posterior[9] = vector_anterior[9]
+            vector_posterior[10] += 1
+            vector_posterior[18].append('futbol')
+            
+        elif indice_minimo == 1:
+            vector_posterior[0] = 'Llegada handball'
+            vector_posterior[1] = vector_anterior[5] 
+            vector_posterior[4] = random.random()
+            vector_posterior[5] = (uniforme(10, 14, vector_posterior[4]) * 60) + vector_posterior[1]
+            vector_posterior[2] = 0
+            vector_posterior[6] = 0
+            vector_posterior[8] = 'Ocupado'
+            vector_posterior[9] = vector_anterior[9]
+            vector_posterior[10] += 1
+            vector_posterior[18].append('handball')
+
+        elif indice_minimo == 2:
+            vector_posterior[0] = 'Llegada basket'
+            vector_posterior[1] = vector_anterior[7] 
+            vector_posterior[6] = random.random()
+            vector_posterior[7] = (uniforme(6, 10, vector_posterior[6]) * 60)+ vector_posterior[1]
+            vector_posterior[2] = 0
+            vector_posterior[4] = 0
+            vector_posterior[8] = 'Ocupado'
+            vector_posterior[9] = vector_anterior[9]
+            vector_posterior[10] += 1
+            vector_posterior[18].append('basket')
+            
+    elif indice_minimo == 0:
         vector_posterior[0] = 'Llegada futbol'
-        vector_posterior[1] = vector_anterior[3]
+        vector_posterior[1] = vector_anterior[3] 
         vector_posterior[2] = random.random()
-        vector_posterior[3] = exp_negativa(vector_posterior[2], 10) * 60  # cambiar el 10 por lo que ingrese
+        vector_posterior[3] = (exp_negativa(vector_posterior[2], 10) * 60) + vector_posterior[1]  # cambiar el 10 por lo que ingrese
         vector_posterior[4] = 0
         vector_posterior[6] = 0
         
@@ -173,9 +209,9 @@ def generacion_linea(vector_anterior):
 
     elif indice_minimo == 1:
         vector_posterior[0] = 'Llegada handball'
-        vector_posterior[1] = vector_anterior[5]
+        vector_posterior[1] = vector_anterior[5] 
         vector_posterior[4] = random.random()
-        vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) * 60
+        vector_posterior[5] = (uniforme(10, 14, vector_posterior[4]) * 60) + vector_posterior[1]
         vector_posterior[2] = 0
         vector_posterior[6] = 0
         
@@ -195,9 +231,9 @@ def generacion_linea(vector_anterior):
 
     elif indice_minimo == 2:
         vector_posterior[0] = 'Llegada basket'
-        vector_posterior[1] = vector_anterior[7]
+        vector_posterior[1] = vector_anterior[7] 
         vector_posterior[6] = random.random()
-        vector_posterior[7] = uniforme(6, 10, vector_posterior[6]) * 60
+        vector_posterior[7] = (uniforme(6, 10, vector_posterior[6]) * 60)+ vector_posterior[1]
         vector_posterior[2] = 0
         vector_posterior[4] = 0
         
@@ -209,13 +245,13 @@ def generacion_linea(vector_anterior):
             vector_posterior[8] = 'Ocupado'
             vector_posterior[9] = 'Basket'
             vector_posterior[11] = random.random()
-            vector_posterior[12] =  uniforme(60, 100, vector_posterior[11])
-            vector_posterior[11] = 0
+            vector_posterior[12] = uniforme(60, 100, vector_posterior[11])
             vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
                 vector_posterior[15] = vector_anterior[15] + (vector_posterior[1] - vector_anterior[1])
-    elif indice_minimo == 3 and vector_anterior[0] == 'Llegada basket' or vector_anterior[0] == 'Llegada futbol' or vector_anterior[0] == 'Llegada handball':
+    elif indice_minimo == 3 and ( 'entrada' in vector_anterior[0].lower() or 'llegada' in vector_anterior[0].lower()):
+        vector_posterior[11] = 0
         vector_posterior[0] = 'Inicio de limpieza'
         vector_posterior[2] = 0
         vector_posterior[4] = 0
@@ -224,37 +260,40 @@ def generacion_linea(vector_anterior):
         vector_posterior[1] = vector_anterior[13]       
         vector_posterior[8] = 'En limpieza'
         vector_posterior[9] = '-'
-        vector_posterior[12] = 10
+        vector_posterior[12] = 10 # PARAMETRO ACTUALIZABLE 
         vector_posterior[13] = vector_posterior[1] + vector_posterior[12]
     elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza" and  vector_posterior[10] > 0:
         vector_posterior[10] -= 1
-        vector_posterior[0] = 'Llegada ' + (vector_posterior[18])[0]
+        vector_posterior[0] = 'Entrada ' + vector_posterior[18][0]
+        vector_posterior[18].pop(0)
         vector_posterior[1] = vector_anterior[13]
+        
         if vector_posterior[0] == 'Llegada futbol':
             vector_posterior[1] = vector_anterior[3]
             vector_posterior[2] = random.random()
-            vector_posterior[3] = exp_negativa(vector_posterior[2], 10) * 60  # cambiar el 10 por lo que ingrese
+            vector_posterior[3] = (exp_negativa(vector_posterior[2], 10) * 60) + vector_posterior[1]  # cambiar el 10 por lo que ingrese
             vector_posterior[2] = 0
             vector_posterior[4] = 0
             vector_posterior[6] = 0
         elif vector_posterior[0] == 'Llegada handball':
             vector_posterior[1] = vector_anterior[5]
             vector_posterior[4] = random.random()
-            vector_posterior[5] = uniforme(10, 14, vector_posterior[4]) * 60
+            vector_posterior[5] = (uniforme(10, 14, vector_posterior[4]) * 60) + vector_posterior[1]
             vector_posterior[2] = 0
             vector_posterior[4] = 0
             vector_posterior[6] = 0
         elif vector_posterior[0] == 'Llegada basket':  
             vector_posterior[1] = vector_anterior[7]
             vector_posterior[6] = random.random()
-            vector_posterior[7] = uniforme(6, 10, vector_posterior[6]) * 60
+            vector_posterior[7] = (uniforme(6, 10, vector_posterior[6]) * 60) + vector_posterior[1]
             vector_posterior[2] = 0
             vector_posterior[4] = 0
             vector_posterior[6] = 0
         
     elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza":
+        vector_posterior[11] = 0 
         vector_posterior [0] = 'Fin de limpieza'
-        vector_posterior [1]  = vector_anterior[13]
+        vector_posterior [1]  = vector_anterior[13] 
         vector_posterior[8] = 'Libre'
         vector_posterior[12] = 0
         vector_posterior[13] = 0
