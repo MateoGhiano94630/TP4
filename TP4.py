@@ -26,6 +26,8 @@ def pestaña(self, root):
     
     self.entry_L = ttk.Entry(self.tab1)
     self.entry_L.grid(row=2, column=1, padx=10, pady=5)
+    
+    self.entry_L.insert(10, "10")
 
     #Ingreso Datos futbol
     
@@ -126,18 +128,18 @@ def uniforme(inf, sup, RND):
 
 def inicializar_vector():
     vector_estado = ["Inicializacion", 0, 0, 0, 0, 0, 0, 0, 'Libre', '-', 0, 0, 0, '-', 0, 0, 0, 0,[]]
-    vector_estado[2] = random.random()
-    vector_estado[3] = exp_negativa(vector_estado[2], 10) * 60
+    vector_estado[2] = round(random.random(),4)
+    vector_estado[3] = round(exp_negativa(vector_estado[2], 10) * 60,4)
 
-    vector_estado[4] = random.random()
-    vector_estado[5] = uniforme(10, 14, vector_estado[4]) * 60
+    vector_estado[4] = round(random.random(),4)
+    vector_estado[5] = round(uniforme(10, 14, vector_estado[4]) * 60,4)
 
-    vector_estado[6] = random.random()
-    vector_estado[7] = uniforme(6, 10, vector_estado[6]) * 60
+    vector_estado[6] = round(random.random(),4)
+    vector_estado[7] = round(uniforme(6, 10, vector_estado[6]) * 60,4)
 
     return vector_estado
 
-def generacion_linea(vector_anterior):
+def generacion_linea(vector_anterior, self):
     vector_posterior = vector_anterior
     if vector_posterior[1] == 0 or vector_posterior[13] in ['-', 0]:
         valores = [vector_anterior[3], vector_anterior[5], vector_anterior[7]]
@@ -250,6 +252,71 @@ def generacion_linea(vector_anterior):
             if vector_anterior[10] > 0:
                 vector_posterior[10] = vector_anterior[10] - 1
                 vector_posterior[15] = vector_anterior[15] + (vector_posterior[1] - vector_anterior[1])
+    elif indice_minimo == 3 and  'Fin de limpieza' in vector_anterior[0] and 'Ocupado' in vector_anterior[8] and vector_posterior[10] == 0:
+        vector_posterior[11] = 0
+        vector_posterior[0] = 'Inicio de limpieza'
+        vector_posterior[2] = 0
+        vector_posterior[4] = 0
+        vector_posterior[6] = 0
+        
+        vector_posterior[1] = vector_anterior[13]       
+        vector_posterior[8] = 'En limpieza'
+        vector_posterior[9] = '-'
+        vector_posterior[12] = float(self.entry_L.get()) # PARAMETRO ACTUALIZABLE 
+        vector_posterior[13] = vector_posterior[1] + vector_posterior[12]
+    elif indice_minimo == 3 and  'Fin de limpieza' in vector_anterior[0] and 'Ocupado' in vector_anterior[8] and vector_posterior[10] > 0:
+        
+        vector_posterior[0] = 'Entrada' + vector_posterior[18][0]
+        vector_posterior[1] = vector_posterior[13]
+        vector_posterior[4] = 0
+        vector_posterior[4] = 0
+        vector_posterior[6] = 0
+        vector_posterior[8] = 'Ocupado'
+        vector_posterior[9] =  vector_posterior[18][0]
+        vector_posterior[10] -= 1
+        if 'futbol' in vector_posterior[18][0].lower():
+            vector_posterior[11] = random.random()
+            vector_posterior[12] =  uniforme(80, 100,vector_posterior[11]) # cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
+            
+        elif 'handball' in vector_posterior[18][0].lower():
+            vector_posterior[11] = random.random()
+            vector_posterior[12] =  uniforme(70, 130, vector_posterior[11]) #cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
+            
+        elif 'basket' in vector_posterior[18][0].lower():  
+            vector_posterior[11] = random.random()
+            vector_posterior[12] = uniforme(60, 100, vector_posterior[11])
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1] 
+        vector_posterior[18].pop(0)
+       
+   
+        
+    elif indice_minimo == 3 and 'Llegada' in vector_anterior[0] and  vector_posterior[10] > 0 and vector_posterior[8] == 'En limpieza':
+        vector_posterior[10] -= 1
+        vector_posterior[0] = 'Fin de limpieza'
+        vector_posterior[8] = 'Ocupado' 
+        vector_posterior[9] = vector_posterior[18][0]
+        vector_posterior[1] = vector_posterior[13]
+        vector_posterior[12] = 0
+        vector_posterior[13] = 0 
+         
+        if 'futbol' in vector_posterior[18][0].lower():
+            vector_posterior[11] = random.random()
+            vector_posterior[12] =  uniforme(80, 100,vector_posterior[11]) # cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
+            
+        elif 'handball' in vector_posterior[18][0].lower():
+            vector_posterior[11] = random.random()
+            vector_posterior[12] =  uniforme(70, 130, vector_posterior[11]) #cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
+            
+        elif 'basket' in vector_posterior[18][0].lower():  
+            vector_posterior[11] = random.random()
+            vector_posterior[12] = uniforme(60, 100, vector_posterior[11])
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1] 
+        vector_posterior[18].pop(0)
+         
     elif indice_minimo == 3 and ( 'entrada' in vector_anterior[0].lower() or 'llegada' in vector_anterior[0].lower()):
         vector_posterior[11] = 0
         vector_posterior[0] = 'Inicio de limpieza'
@@ -260,35 +327,32 @@ def generacion_linea(vector_anterior):
         vector_posterior[1] = vector_anterior[13]       
         vector_posterior[8] = 'En limpieza'
         vector_posterior[9] = '-'
-        vector_posterior[12] = 10 # PARAMETRO ACTUALIZABLE 
+        vector_posterior[12] = float(self.entry_L.get()) # PARAMETRO ACTUALIZABLE 
         vector_posterior[13] = vector_posterior[1] + vector_posterior[12]
+ 
     elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza" and  vector_posterior[10] > 0:
         vector_posterior[10] -= 1
         vector_posterior[0] = 'Entrada ' + vector_posterior[18][0]
+        vector_posterior[9] = vector_posterior[18][0]
         vector_posterior[18].pop(0)
         vector_posterior[1] = vector_anterior[13]
+        vector_posterior[8] = 'Ocupado'
         
-        if vector_posterior[0] == 'Llegada futbol':
-            vector_posterior[1] = vector_anterior[3]
-            vector_posterior[2] = random.random()
-            vector_posterior[3] = (exp_negativa(vector_posterior[2], 10) * 60) + vector_posterior[1]  # cambiar el 10 por lo que ingrese
-            vector_posterior[2] = 0
-            vector_posterior[4] = 0
-            vector_posterior[6] = 0
-        elif vector_posterior[0] == 'Llegada handball':
-            vector_posterior[1] = vector_anterior[5]
-            vector_posterior[4] = random.random()
-            vector_posterior[5] = (uniforme(10, 14, vector_posterior[4]) * 60) + vector_posterior[1]
-            vector_posterior[2] = 0
-            vector_posterior[4] = 0
-            vector_posterior[6] = 0
-        elif vector_posterior[0] == 'Llegada basket':  
-            vector_posterior[1] = vector_anterior[7]
-            vector_posterior[6] = random.random()
-            vector_posterior[7] = (uniforme(6, 10, vector_posterior[6]) * 60) + vector_posterior[1]
-            vector_posterior[2] = 0
-            vector_posterior[4] = 0
-            vector_posterior[6] = 0
+        
+        if 'futbol' in vector_posterior[0].lower():
+            vector_posterior[11] = random.random()
+            vector_posterior[12] =  uniforme(80, 100,vector_posterior[11]) # cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
+            
+        elif 'handball' in vector_posterior[0].lower():
+            vector_posterior[11] = random.random()
+            vector_posterior[12] =  uniforme(70, 130, vector_posterior[11]) #cambiar 70 y 130
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
+            
+        elif 'basket' in vector_posterior[0].lower():  
+            vector_posterior[11] = random.random()
+            vector_posterior[12] = uniforme(60, 100, vector_posterior[11])
+            vector_posterior[13] = vector_posterior[12] + vector_posterior[1]
         
     elif indice_minimo == 3 and vector_anterior[0] == "Inicio de limpieza":
         vector_posterior[11] = 0 
@@ -297,6 +361,21 @@ def generacion_linea(vector_anterior):
         vector_posterior[8] = 'Libre'
         vector_posterior[12] = 0
         vector_posterior[13] = 0
+    vector_posterior[1] = round(vector_posterior[1],4)
+    vector_posterior[2] = round(vector_posterior[2],4)
+    vector_posterior[3] = round(vector_posterior[3],4)
+    vector_posterior[4] = round(vector_posterior[4],4)
+    vector_posterior[5] = round(vector_posterior[5],4)
+    vector_posterior[6] = round(vector_posterior[6],4)
+    vector_posterior[7] = round(vector_posterior[7],4)
+    vector_posterior[11] = round(vector_posterior[11],4)
+    vector_posterior[12] = round(vector_posterior[12],4)
+    vector_posterior[13] = round(vector_posterior[13],4)
+    vector_posterior[14] = round(vector_posterior[14],4)
+    vector_posterior[15] = round(vector_posterior[15],4)
+    vector_posterior[16] = round(vector_posterior[16],4)
+    vector_posterior[17] = round(vector_posterior[17],4)
+    
     return vector_posterior
 
 
@@ -314,7 +393,7 @@ class GestionFila:
         data.append(copy.deepcopy(vector_anterior))
 
         while vector_anterior[1] <= tiempo_final:
-            vector_anterior = generacion_linea(vector_anterior)
+            vector_anterior = generacion_linea(vector_anterior, self)
             data.append(copy.deepcopy(vector_anterior))
         table_text = tabulate(data, headers=['Evento', 'Reloj', '?',
                                             'Tpo llegada', '?', 'Tpo llegada', '?',
